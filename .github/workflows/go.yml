@@ -37,11 +37,11 @@ jobs:
   # 2) Build & test only those services
   build-and-test:
     needs: filter
+    if: ${{ needs.filter.outputs.services != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         service: ${{ fromJson(needs.filter.outputs.services) }}
-    if: matrix.service != ''     # skip if no services changed
     steps:
       # 1. Check out the code
       - name: Checkout code
