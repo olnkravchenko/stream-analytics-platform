@@ -10,18 +10,38 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
-  build:
+  # 1) Detect which services changed
+  filter:
     runs-on: ubuntu-latest
-    
+    outputs:
+      services: ${{ steps.filter.outputs.services }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Filter for changed services
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          # Define one filter per service folder
+          filters: |
+            ingest:
+              - 'services/ingest/**'
+            processor:
+              - 'services/processor/**'
+            aggregator:
+              - 'services/aggregator/**'
+            query-api:
+              - 'services/query-api/**'
+              
+  # 2) Build & test only those services
+  build-and-test:
+    needs: filter
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        # service directories
-        service:
-          - ingest
-          - processor
-          - aggregator
-          - query-api
-    
+        service: ${{ fromJson(needs.filter.outputs.services) }}
+    if: matrix.service != ''     # skip if no services changed
     steps:
       # 1. Check out the code
       - name: Checkout code
