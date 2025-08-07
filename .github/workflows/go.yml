@@ -26,13 +26,13 @@ jobs:
           # Define one filter per service folder
           filters: |
             ingest:
-              - 'services/ingest/**'
+              - 'src/services/ingest/**'
             processor:
-              - 'services/processor/**'
+              - 'src/services/processor/**'
             aggregator:
-              - 'services/aggregator/**'
+              - 'src/services/aggregator/**'
             query-api:
-              - 'services/query-api/**'
+              - 'src/services/query-api/**'
               
   # 2) Build & test only those services
   build-and-test:
@@ -67,22 +67,22 @@ jobs:
       # 4. Install dependencies
       - name: Download dependencies
         run: go mod download
-        working-directory: services/${{ matrix.service }}
+        working-directory: src/services/${{ matrix.service }}
 
       # 5. Lint
       - name: Lint with golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:
           version: v1.58.0
-          working-directory: services/${{ matrix.service }}
+          working-directory: src/services/${{ matrix.service }}
 
       # 6. Run tests
       - name: Test
         run: |
           go test ./... -v -coverprofile=coverage.out
-        working-directory: services/${{ matrix.service }}
+        working-directory: src/services/${{ matrix.service }}
 
       # 7. Build binary
       - name: Build
         run: go build -v -o bin/${{ matrix.service }} .
-        working-directory: services/${{ matrix.service }}
+        working-directory: src/services/${{ matrix.service }}
