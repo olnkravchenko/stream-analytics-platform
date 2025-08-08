@@ -100,3 +100,9 @@ jobs:
           mkdir -p "$OUT"
           go build -v -o "$OUT/${{ matrix.service }}" .
         working-directory: src/services/${{ matrix.service }}
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.service }}-linux-amd64
+          path: src/services/${{ matrix.service }}/bin/${{ matrix.service }}/
