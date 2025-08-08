@@ -52,7 +52,7 @@ jobs:
             if (process.env.QUERY_API === 'true')  services.push('query-api');
             core.setOutput('services', JSON.stringify(services));
             core.info(`Changed services: ${services.join(', ') || '(none)'}`);
-              
+
   # 2) Build & test only those services
   build-and-test:
     needs: filter
@@ -94,7 +94,7 @@ jobs:
         run: go test ./... -v -coverprofile=coverage.out
         working-directory: src/services/${{ matrix.service }}
 
-    - name: Build (per-service folder)
+      - name: Build (per-service folder)
         run: |
           OUT="bin/${{ matrix.service }}"
           mkdir -p "$OUT"
