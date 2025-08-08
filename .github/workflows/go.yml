@@ -14,7 +14,7 @@ jobs:
   filter:
     runs-on: ubuntu-latest
     outputs:
-      services: ${{ steps.filter.outputs.services }}
+      services: ${{ steps.set-matrix.outputs.services }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,6 +33,25 @@ jobs:
               - 'src/services/aggregator/**'
             query-api:
               - 'src/services/query-api/**'
+
+      # Build a JSON array for the matrix based on which filters matched
+      - name: Build matrix
+        id: set-matrix
+        uses: actions/github-script@v7
+        env:
+          INGEST:     ${{ steps.filter.outputs.ingest }}
+          PROCESSOR:  ${{ steps.filter.outputs.processor }}
+          AGGREGATOR: ${{ steps.filter.outputs.aggregator }}
+          QUERY_API:  ${{ steps.filter.outputs.query-api }}
+        with:
+          script: |
+            const services = [];
+            if (process.env.INGEST === 'true')     services.push('ingest');
+            if (process.env.PROCESSOR === 'true')  services.push('processor');
+            if (process.env.AGGREGATOR === 'true') services.push('aggregator');
+            if (process.env.QUERY_API === 'true')  services.push('query-api');
+            core.setOutput('services', JSON.stringify(services));
+            core.info(`Changed services: ${services.join(', ') || '(none)'}`);
               
   # 2) Build & test only those services
   build-and-test:
