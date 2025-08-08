@@ -94,7 +94,9 @@ jobs:
         run: go test ./... -v -coverprofile=coverage.out
         working-directory: src/services/${{ matrix.service }}
 
-      # 7. Build binary
-      - name: Build
-        run: go build -v -o bin/${{ matrix.service }} .
+    - name: Build (per-service folder)
+        run: |
+          OUT="bin/${{ matrix.service }}"
+          mkdir -p "$OUT"
+          go build -v -o "$OUT/${{ matrix.service }}" .
         working-directory: src/services/${{ matrix.service }}
