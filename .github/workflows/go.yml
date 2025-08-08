@@ -4,8 +4,9 @@
 name: Go
 
 on:
-  push:
-    branches: [ "main", "develop" ]
+  # Uncomment for testing the workflow
+  # push:
+  #   branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
 
