@@ -15,7 +15,7 @@ func main() {
 		"bootstrap.servers": "localhost:9092",
 
 		// Fixed properties
-		"group.id": "my-test-script",
+		"group.id":          "my-test-script",
 		"auto.offset.reset": "earliest",
 	})
 	if err != nil {
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	topic := "test-topic"
-	err = c.SubscribeTopics([]string{topic}, nil)
+	_ = c.SubscribeTopics([]string{topic}, nil)
 	// Set up a channel for handling Ctrl-C, etc
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
@@ -47,5 +47,5 @@ func main() {
 		}
 	}
 
-	c.Close()
+	defer c.Close()
 }
